@@ -1,0 +1,62 @@
+{
+  "data_kind": "synthetic",
+  "version": "STAGE-07-2026-10-23",
+  "files": [
+    {
+      "name": "01_综合技术协议_V1.docx",
+      "sha256": "cd208eaf61c0d2dd78e5d8a07accaabea68753861aa7b8f27cf04f10a13f6ec6",
+      "bytes": 38049
+    },
+    {
+      "name": "01_综合技术协议_V1.pdf",
+      "sha256": "eeabaa267a02f786e5baac98979075ab36c2c370615b8127c8ac0018cb476c4f",
+      "bytes": 188417
+    },
+    {
+      "name": "02_澄清单与变更说明.txt",
+      "sha256": "2800ae46faf4f36561ea55e4ddb7aa63a909f0581df6102153f66b8d1ccfca03",
+      "bytes": 1097
+    },
+    {
+      "name": "03_零件选型样例.json",
+      "sha256": "049f36c6ec41dcb51a296d598e1a8cd4e553517bf0f34c9a309a2e5e59f35d9b",
+      "bytes": 818
+    },
+    {
+      "name": "04_试验与评审样例.json",
+      "sha256": "bd9913c81e2ba4521d026444ba9ae2a73e1b37d57461f97f23532490c090bd9a",
+      "bytes": 1343
+    },
+    {
+      "name": "05_样件与实测样例.json",
+      "sha256": "f0e01cd20fa34fa8469af054d3c8047b20a6ea4fb39364fc869d3fc768bec96b",
+      "bytes": 1906
+    },
+    {
+      "name": "06_协同记录与进度样例.json",
+      "sha256": "b1bde6afd08bccb6394fb12ecd4b78b0cbd1b76b2d5bfb295ed42840b68361c3",
+      "bytes": 1524
+    },
+    {
+      "name": "07_样件尺寸示意.svg",
+      "sha256": "288fe76e0bce4809fffc13f3f5f439cd5a656991a5449e199f7fc52c51696d24",
+      "bytes": 794
+    },
+    {
+      "name": "08_需求编号映射.txt",
+      "sha256": "ebcf14993ac010fd07877cabc02fafa8a360568645120cb543dcfc89db6cd9c7",
+      "bytes": 204
+    },
+    {
+      "name": "README.txt",
+      "sha256": "0e9b617f42ca2a23b710a7a6ec434d2f71187c624d0d424eda29f2cbce18be19",
+      "bytes": 3828
+    },
+    {
+      "name": "协议正文与编号映射.json",
+      "sha256": "686a28b7d02dc9a3ec9ae3717ecbfd7cd8fbe98b79d28d9f3d57c0ead5fe06f5",
+      "bytes": 2921
+    }
+  ],
+  "documentation_updated_on": "2026-10-25"
+}

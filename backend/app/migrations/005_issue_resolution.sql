@@ -1,0 +1,10 @@
+ALTER TABLE issues ADD COLUMN resolution_type TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE issues ADD COLUMN evidence_text TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE issues ADD COLUMN closed_by TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE issues ADD COLUMN closed_role TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE issues ADD COLUMN resolution_requirement_id TEXT
+    REFERENCES requirements(id) ON DELETE RESTRICT;

@@ -1,0 +1,73 @@
+{
+  "data_kind": "synthetic",
+  "mode": "manual",
+  "delivery": {
+    "display_code": "SD-DEMO-001",
+    "supplier": "合成样件提供方",
+    "part_display_code": "P-03",
+    "drawing_display_code": "DEMO-DRW-001",
+    "drawing_revision": "A",
+    "delivered_at": "2026-10-23",
+    "quantity": 1,
+    "notes": "合成尺寸基准，不由系统读取CAD自动识别",
+    "drawing_parameters": [
+      {
+        "parameter_key": "holePosition",
+        "parameter_name": "孔位",
+        "expected_value": 120,
+        "tolerance": 0.5,
+        "unit": "mm",
+        "source_note": "配套示意图尺寸1"
+      },
+      {
+        "parameter_key": "shaftDiameter",
+        "parameter_name": "轴径",
+        "expected_value": 45,
+        "tolerance": 0.02,
+        "unit": "mm",
+        "source_note": "配套示意图尺寸2"
+      }
+    ]
+  },
+  "file": "07_样件尺寸示意.svg",
+  "comparison_pass": {
+    "parameters": [
+      {
+        "parameter_key": "holePosition",
+        "measured_value": 120.2,
+        "unit": "mm"
+      },
+      {
+        "parameter_key": "shaftDiameter",
+        "measured_value": 45.01,
+        "unit": "mm"
+      }
+    ],
+    "visual_check": {
+      "mode": "manual",
+      "result": "pass",
+      "note": "合成目视记录，由操作者明确录入"
+    },
+    "evidence": "合成尺寸记录DEMO-MEASURE-001"
+  },
+  "comparison_fail": {
+    "parameters": [
+      {
+        "parameter_key": "holePosition",
+        "measured_value": 121,
+        "unit": "mm"
+      },
+      {
+        "parameter_key": "shaftDiameter",
+        "measured_value": 45.01,
+        "unit": "mm"
+      }
+    ],
+    "visual_check": {
+      "mode": "manual",
+      "result": "pass",
+      "note": "合成目视记录，由操作者明确录入"
+    },
+    "evidence": "合成超差记录DEMO-MEASURE-002"
+  }
+}

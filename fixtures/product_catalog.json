@@ -1,0 +1,110 @@
+{
+  "product_bases": [
+    {
+      "display_code": "JX-12A",
+      "name": "JX-12A 12档 AMT",
+      "transmission_type": "AMT",
+      "gear_count": 12,
+      "rated_input_torque": 2600,
+      "first_gear_ratio": 15.5,
+      "top_gear_type": "direct",
+      "has_pto": false,
+      "weight_kg": 290,
+      "source": "合成型谱库 V1（示意数据）"
+    },
+    {
+      "display_code": "JX-12B",
+      "name": "JX-12B 12档 AMT",
+      "transmission_type": "AMT",
+      "gear_count": 12,
+      "rated_input_torque": 2800,
+      "first_gear_ratio": 14.8,
+      "top_gear_type": "direct",
+      "has_pto": true,
+      "weight_kg": 305,
+      "source": "合成型谱库 V1（示意数据）"
+    },
+    {
+      "display_code": "JX-13A",
+      "name": "JX-13A 13档 AMT",
+      "transmission_type": "AMT",
+      "gear_count": 13,
+      "rated_input_torque": 3000,
+      "first_gear_ratio": 15.8,
+      "top_gear_type": "overdrive",
+      "has_pto": true,
+      "weight_kg": 315,
+      "source": "合成型谱库 V1（示意数据）"
+    },
+    {
+      "display_code": "JX-12C",
+      "name": "JX-12C 12档 MT",
+      "transmission_type": "MT",
+      "gear_count": 12,
+      "rated_input_torque": 2600,
+      "first_gear_ratio": 15.0,
+      "top_gear_type": "direct",
+      "has_pto": false,
+      "weight_kg": 285,
+      "source": "合成型谱库 V1（示意数据）"
+    }
+  ],
+  "base_parts": [
+    {
+      "base_display_code": "JX-12A",
+      "display_code": "P-01",
+      "name": "输入轴",
+      "part_number": "PN-INPUT-01",
+      "category": "shaft",
+      "source": "合成 BOM V1（示意数据）"
+    },
+    {
+      "base_display_code": "JX-12A",
+      "display_code": "P-02",
+      "name": "一轴齿轮",
+      "part_number": "PN-GEAR-01",
+      "category": "gear",
+      "source": "合成 BOM V1（示意数据）"
+    },
+    {
+      "base_display_code": "JX-12A",
+      "display_code": "P-03",
+      "name": "主箱壳体",
+      "part_number": "PN-HOUSING-01",
+      "category": "housing",
+      "source": "合成 BOM V1（示意数据）"
+    },
+    {
+      "base_display_code": "JX-12A",
+      "display_code": "P-04",
+      "name": "离合器壳",
+      "part_number": "PN-CLUTCH-01",
+      "category": "housing",
+      "source": "合成 BOM V1（示意数据）"
+    },
+    {
+      "base_display_code": "JX-12A",
+      "display_code": "P-05",
+      "name": "输出法兰",
+      "part_number": "PN-FLANGE-01",
+      "category": "flange",
+      "source": "合成 BOM V1（示意数据）"
+    },
+    {
+      "base_display_code": "JX-12A",
+      "display_code": "P-06",
+      "name": "齿轮组",
+      "part_number": "PN-GEARSET-01",
+      "category": "gearset",
+      "source": "合成 BOM V1（示意数据）"
+    },
+    {
+      "base_display_code": "JX-12A",
+      "display_code": "P-07",
+      "name": "换挡执行机构",
+      "part_number": "PN-ACTUATOR-01",
+      "category": "actuator",
+      "source": "合成 BOM V1（示意数据）"
+    }
+  ]
+}

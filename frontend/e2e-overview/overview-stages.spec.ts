@@ -1,0 +1,50 @@
+import { expect, test } from '@playwright/test'
+import { openWorkspaceTab } from '../e2e-support/navigation'
+const evidence = process.env.ZHIYAN_EVIDENCE_DIR ?? 'test-results/overview/screenshots'
+
+test('empty overview introduces the project and switches to authoritative progress after Word import', async ({ page, request }) => {
+  const errors: string[] = [], external: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  page.on('request', req => { if (/^https?:/.test(req.url()) && !['127.0.0.1', 'localhost'].includes(new URL(req.url()).hostname)) external.push(req.url()) })
+  await page.goto('/')
+  const intro = page.getByRole('region', { name: '项目启动介绍' })
+  await expect(intro).toBeVisible()
+  await expect(page.getByRole('region', { name: '项目实时指标' })).toHaveCount(0)
+  for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [390, 844]]) {
+    await page.setViewportSize({ width, height })
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    if (width >= 1366) expect(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight)).toBe(true)
+    for (const label of ['需求解析智能体', '变型设计智能体', '试验验证智能体', '一致性检测', '协同风险预警', '工程知识底座']) await expect(page.getByRole('heading', { name: label })).toBeVisible()
+    await expect(page.getByRole('button', { name: '开始导入技术协议' })).toBeVisible()
+    await page.screenshot({ path: `${evidence}/before-import-${width}.png`, fullPage: true })
+  }
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.getByRole('button', { name: '开始导入技术协议' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: '协议解析与澄清' })).toBeVisible()
+  const distribution = page.getByRole('region', { name: '导入状态分布' })
+  await expect(distribution.getByText('暂无已导入文档')).toBeVisible()
+  await expect(distribution.getByText('暂无文件处理记录')).toBeVisible()
+  await page.screenshot({ path: `${evidence}/import-distribution-empty.png`, fullPage: true })
+  await page.getByLabel('选择协议文件').setInputFiles('../演示导入文件/01_重型变速器技术协议_V1.docx')
+  await expect(page.getByText(/文件文本已提取/)).toBeVisible()
+  await page.getByRole('button', { name: '导入并解析', exact: true }).click()
+  await expect(page.getByRole('link', { name: '下载原件', exact: true })).toBeVisible()
+  await expect(distribution.getByRole('img', { name: /文件状态：已解析1份，已归档待解析0份，未归档待核对0份，已解析需核对0份/ })).toBeVisible()
+  await distribution.scrollIntoViewIfNeeded()
+  await page.screenshot({ path: `${evidence}/import-distribution-populated.png`, fullPage: true })
+  const projects = await (await request.get('/api/projects')).json() as { id: string }[]
+  const overview = await (await request.get(`/api/projects/${projects[0].id}/overview`)).json()
+  expect(overview.requirements.total).toBeGreaterThan(0)
+  await openWorkspaceTab(page, '项目总览')
+  await expect(intro).toHaveCount(0)
+  await expect(page.getByLabel('需求总量')).toContainText(String(overview.requirements.total))
+  const review = page.getByRole('group', { name: '需求审核状态' })
+  await expect(review).toContainText(`待审核${overview.requirements.draft + overview.requirements.pending_review}`)
+  await expect(page.getByLabel('下一步建议')).toContainText('需求待审核')
+  await expect(page.getByRole('list', { name: '协同预警列表' }).getByRole('listitem')).toHaveCount(0)
+  await expect(page.getByText('暂无当前可用的计算依据')).toBeVisible()
+  await page.screenshot({ path: `${evidence}/after-word-import.png`, fullPage: true })
+  await page.getByLabel('下一步建议').getByRole('button').click()
+  await expect(page.getByRole('heading', { level: 1, name: '需求清单' })).toBeVisible()
+  expect(errors).toEqual([]); expect(external).toEqual([])
+})

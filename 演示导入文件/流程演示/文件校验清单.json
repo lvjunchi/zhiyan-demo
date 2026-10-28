@@ -1,0 +1,15 @@
+{
+  "data_kind": "synthetic",
+  "files": [
+    {
+      "name": "01_流程演示协议_V1.docx",
+      "bytes": 38055,
+      "sha256": "5f917f3d2acc0dc2e3abb38a44ce1572d56e0c70120677fcf075a64086d70e74"
+    },
+    {
+      "name": "01_流程演示协议_V1.pdf",
+      "bytes": 182525,
+      "sha256": "4bf6f5bdb6df5f50d52dfa49bb6bfe3751f0e868ab410e9ff7330e33fa769bdd"
+    }
+  ]
+}

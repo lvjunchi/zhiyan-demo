@@ -1,0 +1,7 @@
+engineMaxTorque=REQ-P01-B-003
+gearboxRatedInputTorque=REQ-P01-C-002
+gearCount=REQ-P01-C-001
+transmissionType=REQ-P01-C-001-T
+pto=REQ-P01-C-006
+assemblyWeight=REQ-P01-D-002
+durability=REQ-P01-F-001

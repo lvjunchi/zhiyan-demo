@@ -1,0 +1,44 @@
+.decision-dialog { width:min(1040px,calc(100vw - 48px)); max-width:none; max-height:calc(100dvh - 64px); padding:0; margin:auto; border:1px solid #cbdbe9; border-radius:15px; background:#f5f8fc; color:#294863; box-shadow:0 26px 100px #051c3f55; font:14px/1.65 'Microsoft YaHei UI','Microsoft YaHei','Segoe UI',sans-serif; }
+.decision-dialog[open] { display:flex; flex-direction:column; }
+.decision-dialog::backdrop { background:#071b33a6; backdrop-filter:blur(4px); }
+.decision-dialog-heading { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:22px 28px; border-bottom:1px solid #dce6ef; background:linear-gradient(120deg,#eaf3fc,#fff); }
+.decision-dialog-heading > div > span { color:#6486a2; font-size:12px; letter-spacing:.06em; }
+.decision-dialog h2 { margin:3px 0; color:#193f60; font-size:22px; line-height:1.5; }
+.decision-dialog-heading p { margin:4px 0 0; color:#617e96; font-size:13px; }
+.decision-dialog button { font:inherit; padding:8px 15px; border:1px solid #bdcfe1; border-radius:7px; color:#2a618f; background:#fff; cursor:pointer; }
+.decision-dialog button:hover { background:#edf5fd; border-color:#7fa9ce; }
+.decision-dialog button:disabled { cursor:default; opacity:.5; }
+.decision-dialog button.primary-action {background:#2366b2;border-color:#195393;color:#fff;font-weight:600;}
+.decision-dialog button.primary-action:hover {background:#195393;}
+.decision-dialog button:focus-visible,.decision-dialog textarea:focus-visible { outline:2px solid #3789c6; outline-offset:3px; }
+.decision-dialog-heading > button { flex-shrink:0; }
+.decision-dialog-heading button span { margin-left:12px; font-size:20px; line-height:1; }
+.decision-dialog-body { padding:24px 28px; overflow:auto; overscroll-behavior:contain; min-height:0; }
+.decision-dialog-body h3 { margin:0 0 14px; font-size:16px; color:#254e70; }
+.decision-dialog-body h4 { margin:0 0 10px; font-size:14px; color:#315771; }
+.decision-dialog-body section + section { margin-top:24px; }
+.decision-dialog .engineering-versions { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; }
+.decision-dialog .engineering-versions article { border:1px solid #d8e3ee; background:#fff; padding:16px; border-radius:9px; }
+.decision-dialog .engineering-versions article[data-current=true] { border-color:#95badc; background:#edf5ff; box-shadow:inset 3px 0 #4488c2; }
+.decision-dialog .engineering-versions strong { color:#315d7f; }
+.decision-dialog .engineering-versions p { margin:8px 0 0; color:#5e778e; overflow-wrap:anywhere; }
+.decision-review { padding:20px; border:1px solid #d5e2ed; border-radius:9px; background:#fff; }
+.decision-dialog label { display:block; font-weight:600; color:#345670; }
+.decision-dialog textarea { display:block; box-sizing:border-box; width:100%; min-height:82px; margin-top:8px; padding:10px 12px; border:1px solid #c6d6e5; border-radius:7px; resize:vertical; background:#fbfdff; color:#234660; font:inherit; font-weight:400; }
+.decision-dialog .form-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.decision-dialog .form-actions > button:first-child { background:#2869ad; border-color:#2869ad; color:#fff; }
+.decision-dialog .form-actions.requirement-batch-actions > button.primary-action {background:#2366b2;border-color:#195393;color:#fff;}
+.decision-dialog .form-actions.requirement-batch-actions > button.secondary {background:#f4f8fd;border-color:#bdcfe1;color:#52718f;}
+.decision-dialog .form-actions.requirement-batch-actions > button.primary-action:hover {background:#195393;}
+.decision-dialog .form-actions.requirement-batch-actions > button.secondary:hover {background:#eaf2fa;}
+.decision-dialog .hint { color:#6d8396; font-size:12px; }
+.decision-dialog ul { margin:0; padding-left:20px; overflow-wrap:anywhere; }
+.decision-dialog li + li { margin-top:8px; }
+.decision-audit li { padding:12px; border:1px solid #dce6ee; border-radius:7px; background:#fff; list-style:none; }
+.decision-dialog ul.decision-audit { padding:0; }
+.decision-audit small { display:block; margin-top:5px; color:#748a9e; }
+.decision-dialog .notice { border-radius:7px; padding:12px 16px; margin:0 0 18px; }
+.decision-dialog .notice.error { background:#fff0f1; color:#ae3d4c; border:1px solid #efc3ca; }
+.decision-dialog .notice.success { background:#edf9f4; color:#287b5e; border:1px solid #bee5d5; }
+.decision-dialog-footer { padding:12px 28px; border-top:1px solid #dce6ef; color:#71879b; font-size:12px; background:#fff; }
+@media(max-width:760px) { .decision-dialog { width:calc(100vw - 20px); max-height:calc(100dvh - 24px); }.decision-dialog-heading { padding:16px; gap:12px; align-items:flex-start; }.decision-dialog h2 { font-size:18px; }.decision-dialog-body { padding:16px; }.decision-dialog .engineering-versions { grid-template-columns:1fr; }.decision-review { padding:14px; }.decision-dialog-footer { padding:12px 16px; } }

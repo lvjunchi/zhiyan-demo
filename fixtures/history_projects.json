@@ -1,0 +1,71 @@
+{
+  "source_label": "合成历史项目库 V1（示意数据）",
+  "mode": "mock",
+  "history_projects": [
+    {
+      "display_code": "HX-2023-01",
+      "name": "陕汽 X 系 12 档 AMT 取力器项目",
+      "customer": "陕汽集团",
+      "transmission_type": "AMT",
+      "gear_count": 12,
+      "rated_input_torque": 2700,
+      "has_pto": true,
+      "assembly_weight_kg": 285,
+      "top_gear_type": "direct",
+      "notes": "合成项目：12 档 AMT，带取力器，重量余量较小。",
+      "source": "合成历史项目库 V1（示意数据）"
+    },
+    {
+      "display_code": "HX-2023-02",
+      "name": "陕汽 Y 系 12 档 AMT 轻量化项目",
+      "customer": "陕汽集团",
+      "transmission_type": "AMT",
+      "gear_count": 12,
+      "rated_input_torque": 2500,
+      "has_pto": true,
+      "assembly_weight_kg": 295,
+      "top_gear_type": "overdrive",
+      "notes": "合成项目：扭矩余量偏低，最高档为超速档。",
+      "source": "合成历史项目库 V1（示意数据）"
+    },
+    {
+      "display_code": "HX-2022-05",
+      "name": "陕汽重载牵引 10 档 AMT 项目",
+      "customer": "陕汽集团",
+      "transmission_type": "AMT",
+      "gear_count": 10,
+      "rated_input_torque": 2600,
+      "has_pto": true,
+      "assembly_weight_kg": 280,
+      "top_gear_type": "direct",
+      "notes": "合成项目：档位数少于当前需求。",
+      "source": "合成历史项目库 V1（示意数据）"
+    },
+    {
+      "display_code": "HX-2022-08",
+      "name": "陕汽工程车 12 档 MT 项目",
+      "customer": "陕汽集团",
+      "transmission_type": "MT",
+      "gear_count": 12,
+      "rated_input_torque": 2800,
+      "has_pto": true,
+      "assembly_weight_kg": 300,
+      "top_gear_type": "direct",
+      "notes": "合成项目：手动变速器，扭矩等级较高。",
+      "source": "合成历史项目库 V1（示意数据）"
+    },
+    {
+      "display_code": "HX-2024-03",
+      "name": "陕汽高端物流 12 档 AT 项目",
+      "customer": "陕汽集团",
+      "transmission_type": "AT",
+      "gear_count": 12,
+      "rated_input_torque": 2900,
+      "has_pto": false,
+      "assembly_weight_kg": 310,
+      "top_gear_type": "overdrive",
+      "notes": "合成项目：液力自动变速器，无取力器，重量略超当前上限。",
+      "source": "合成历史项目库 V1（示意数据）"
+    }
+  ]
+}

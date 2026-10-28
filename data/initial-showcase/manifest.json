@@ -1,0 +1,30 @@
+{
+  "data_kind": "synthetic",
+  "database": "data/initial-showcase/initial.db",
+  "project_id": "96004a36-2cb3-4a00-866e-df443da5e5a0",
+  "source_file": "演示导入文件/01_重型变速器技术协议_V1.docx",
+  "source_sha256": "5bd022e55a1bcc6206c965558c3799598dbb979ddbac4aa8b4ae2d68af1bc51b",
+  "requirements": 13,
+  "coverage": 100.0,
+  "passed_requirements": 5,
+  "coordination": {
+    "latencies": [
+      48.0,
+      52.0,
+      56.0
+    ],
+    "average_response_hours": 52.0,
+    "risk": "high",
+    "records": 10,
+    "progress": 3
+  },
+  "package_status": "draft",
+  "separate_inputs": [
+    "合成澄清CN-01/CN-02",
+    "03_零件选型样例.json",
+    "04_试验与评审样例.json",
+    "05_样件与实测样例.json",
+    "合成沟通与进度周报"
+  ],
+  "note": "完整初始展示；不改变原协议，不自动接受高风险，不自动批准材料；清空后不自动补回样例"
+}

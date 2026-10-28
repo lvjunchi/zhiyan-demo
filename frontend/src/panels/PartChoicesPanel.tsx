@@ -1,0 +1,39 @@
+import { useEffect,useState } from 'react'
+import { api } from '../api'
+import type { PartChoice,PartChoices } from '../types'
+import { DetailOverlay } from '../components/DetailOverlay'
+import { PartIllustration } from '../components/PartIllustration'
+import { Notice } from '../ui'
+import { DEMO_ACTOR,DEMO_ROLE,toErrorMessage } from '../uiSupport'
+import './part-choices.css'
+const labels={unselected:'待选择',pending_review:'已选择 · 待确认',confirmed:'已确认',rejected:'已驳回',recheck:'待复核'}
+export function PartChoicesPanel({projectId,refreshKey,onChanged}:{projectId:string;refreshKey:number;onChanged:()=>void}){
+ const [data,setData]=useState<PartChoices|null>(null),[error,setError]=useState(''),[message,setMessage]=useState(''),[selectedId,setSelectedId]=useState<string|null>(null),[opener,setOpener]=useState<HTMLElement|null>(null),[busy,setBusy]=useState(false),[blocked,setBlocked]=useState(false),[comment,setComment]=useState(''),[filter,setFilter]=useState('all'),[reload,setReload]=useState(0)
+ const selected=data?.parts.find(row=>row.record.id===selectedId)
+ useEffect(()=>{let active=true;api.listPartChoices(projectId).then(value=>{if(active){setData(value);setError('');setBlocked(false)}}).catch((err:unknown)=>{if(active)setError(toErrorMessage(err))});return()=>{active=false}},[projectId,refreshKey,reload])
+ async function operate(group:PartChoice,candidateId?:string,decision:'confirmed'|'rejected'='confirmed'){
+  if(busy||blocked)return
+  setBusy(true);setError('');setMessage('');let saved=false
+  try{
+   if(candidateId)await api.selectPartCandidate(group.record.id,{candidate_id:candidateId,expected_revision:group.record.revision,actor:DEMO_ACTOR,role:DEMO_ROLE,comment:'按登记约束选择候选；几何接口待工程师核对'})
+   else await api.confirmEngineering('part',group.record.id,{expected_revision:group.record.revision,actor:DEMO_ACTOR,role:DEMO_ROLE,decision,comment:comment.trim()})
+   saved=true
+   setData(await api.listPartChoices(projectId));onChanged();setMessage(candidateId?'型号已保存，需独立审核当前版本':decision==='confirmed'?'选型审核已保存':group.record.review_status==='confirmed'?'已撤回确认并驳回，相关成果需复核':'选型已驳回，修改型号后重新审核')
+   if(!candidateId){setSelectedId(null);setComment('')}
+  }catch(err){if(saved){setBlocked(true);setError(`操作已保存，但刷新失败，请重新读取，勿重复提交：${toErrorMessage(err)}`)}else setError(toErrorMessage(err))}
+  finally{setBusy(false)}
+ }
+ function inspect(group:PartChoice,trigger:HTMLElement){setSelectedId(group.record.id);setOpener(trigger);setError('');setMessage('');setComment('')}
+ return <section className="panel part-choices" aria-label="零件型号选择"><div className="panel-heading"><h2>零件型号选择</h2><span className="mode-badge">合成候选 · 规则匹配</span></div><p className="hint">清单来自变型分析的可复用件：先核对变型点，再选具体型号并审核。上方“工程决策版本与审核”记录同一零件的版本、依据和审核历史。示意图不代表制造图纸。</p>
+ {!selectedId&&error&&<Notice kind="error">{error}</Notice>}{!selectedId&&message&&<Notice kind="success">{message}</Notice>}
+ <div className="inline-controls"><button type="button" className="secondary" disabled={busy} onClick={()=>setReload(value=>value+1)}>重新读取零件选型</button></div>
+ {data?<><div className="choice-statistics" role="group" aria-label="零件选择状态统计">{Object.entries(labels).map(([key,label])=><button type="button" key={key} data-tone={key} aria-pressed={filter===key} onClick={()=>setFilter(filter===key?'all':key)}><span>{label}</span><strong>{data.counts[key as keyof typeof labels]}</strong></button>)}</div><div className="part-choice-grid">{data.parts.filter(group=>filter==='all'||group.selection_state===filter).map(group=><article className="part-choice-card" data-object-id={group.record.id} data-state={group.selection_state} key={group.record.id}><PartIllustration kind={group.candidates[0]?.image_key??'housing'} name={group.record.part_name??'零件'}/><div><span className="muted">{group.record.base_display_code} · {group.record.part_display_code} · V{group.record.revision}</span><h3>{group.record.part_name}</h3><p>{group.selected_candidate_id?group.record.part_number:'尚未选定候选型号'} <span className={`status choice-state ${group.selection_state==='confirmed'?'confirmed':group.selection_state==='rejected'?'rejected':'draft'}`}>{group.selection_state==='confirmed'?'✓ 已确认':labels[group.selection_state]}</span></p><button type="button" className="secondary" aria-label={`选择型号 ${group.record.part_display_code}`} onClick={event=>inspect(group,event.currentTarget)}>比选型号与审核</button></div></article>)}</div>{!data.parts.length&&<p className="empty">运行变型分析后显示当前零件清单；基础候选库已预置。</p>}<p className="hint">{data.catalog_source}</p></>:<p className="hint">{error?'选型信息暂不可用，可重新读取。':'正在读取零件型号与审核状态…'}</p>}
+ {selected&&<DetailOverlay title="零件候选比选" variant="wide" eyebrow="型谱与零件 · 选择 / 确认" subtitle={`${selected.record.base_display_code} · ${selected.record.part_name} · V${selected.record.revision} · ${labels[selected.selection_state]}`} returnFocus={opener} locked={busy} onClose={()=>setSelectedId(null)}>
+ {error&&<Notice kind="error">{error}</Notice>}{message&&<Notice kind="success">{message}</Notice>}
+ <p className="hint">候选包络与当前发动机/变速器输入逐项比较；红色项不可选，缺少依据时不判为通过。最终选型必须由工程师核对材料和安装接口。</p>
+ <div className="candidate-grid">{selected.candidates.map(candidate=><article className="candidate-card" key={candidate.id} data-selected={selected.selected_candidate_id===candidate.id}><PartIllustration kind={candidate.image_key} name={candidate.part_name}/><h3>{candidate.model_code}</h3><p>{candidate.rated_torque_nm} N·m · 最多 {candidate.max_gears} 档</p><p>{candidate.material}</p><span className={`badge ${candidate.fit==='pass'?'confirmed':candidate.fit==='fail'?'rejected':'draft'}`}>{candidate.fit==='pass'?'登记约束符合':candidate.fit==='fail'?'存在不满足项':'依据不完整'}</span><ul>{candidate.checks.map(check=><li key={check.requirement_id}>{check.display_code} · V{check.revision}：{check.parameter} {check.required??'未知'} {check.unit}；候选 {check.capacity}（{check.result==='pass'?'符合':check.result==='fail'?'不符合':'待核对'}）</li>)}</ul><p className="hint">{candidate.source}</p><button type="button" disabled={busy||blocked||candidate.fit!=='pass'||selected.record.status!=='current'||candidate.id===selected.selected_candidate_id} aria-label={`选用 ${candidate.model_code}`} onClick={()=>void operate(selected,candidate.id)}>{candidate.id===selected.selected_candidate_id?'当前选定型号':`选用 ${candidate.model_code}`}</button></article>)}</div>
+ {selected.selected_candidate_id&&<div className="decision-review"><h3>审核选定型号 · {selected.record.part_number}</h3><p className="hint">先确认上游需求与变型点，再确认本版选型；审核结果同步工程决策版本与材料包门槛。</p>{!!selected.confirmation_blockers?.length&&<div className="choice-blockers" role="note"><strong>确认前需处理</strong><ul>{selected.confirmation_blockers.map(reason=><li key={reason}>{reason}</li>)}</ul><p>请先关闭弹窗，到上方“工程决策版本与审核”核对并确认变型点；完成后选型状态会自动刷新，也可点击“重新读取零件选型”。驳回不要求上游先通过。</p></div>}{selected.record.review_status==='rejected'?<p>本版本已驳回，修改型号后建立新版本并重新审核。</p>:<>{selected.record.review_status==='confirmed'&&<p className="hint">撤回将保留原确认记录，新增撤回与驳回记录；相关设计、试验和一致性结果需复核。</p>}<label>{selected.record.review_status==='confirmed'?'撤回原因（选填）':'审核意见（确认可留空，驳回必填）'}<textarea aria-label="零件选型审核意见" rows={3} maxLength={2000} value={comment} onChange={event=>setComment(event.target.value)} disabled={busy}/></label><div className="form-actions">{selected.record.review_status!=='confirmed'&&<button type="button" disabled={busy||blocked||!!selected.confirmation_blockers?.length||selected.record.status!=='current'} onClick={()=>void operate(selected)}>确认选定型号</button>}<button type="button" className="secondary danger-action" disabled={busy||blocked||(selected.record.review_status!=='confirmed'&&!comment.trim())||selected.record.status!=='current'} onClick={()=>void operate(selected,undefined,'rejected')}>{selected.record.review_status==='confirmed'?'撤回确认并驳回':'驳回选定型号'}</button></div></>}</div>}
+ {blocked&&<button type="button" disabled={busy} onClick={()=>setReload(value=>value+1)}>重新读取保存结果</button>}
+ </DetailOverlay>}
+ </section>
+}

@@ -1,0 +1,51 @@
+{
+  "data_kind": "synthetic",
+  "topic": {
+    "name": "合成设计冻结交付协同",
+    "expected_participants": [
+      "A 主机方",
+      "B 研发方"
+    ],
+    "window_start": "2026-10-20T00:00:00+08:00",
+    "window_end": "2026-10-24T00:00:00+08:00"
+  },
+  "records": [
+    {
+      "external_id": "DEMO-MSG-01",
+      "record_type": "message",
+      "sender": "A 主机方",
+      "content_summary": "请确认交付资料",
+      "sent_at": "2026-10-20T09:00:00+08:00",
+      "reply_to_external_id": null
+    },
+    {
+      "external_id": "DEMO-MSG-02",
+      "record_type": "message",
+      "sender": "B 研发方",
+      "content_summary": "回复资料核对状态",
+      "sent_at": "2026-10-20T11:00:00+08:00",
+      "reply_to_external_id": "DEMO-MSG-01"
+    }
+  ],
+  "progress": [
+    {
+      "participant": "A 主机方",
+      "milestone": "设计冻结",
+      "planned_percent": 80,
+      "actual_percent": 90,
+      "artifact_version": "V2",
+      "reported_at": "2026-10-23T16:00:00+08:00",
+      "evidence": "合成周报A"
+    },
+    {
+      "participant": "B 研发方",
+      "milestone": "设计冻结",
+      "planned_percent": 80,
+      "actual_percent": 30,
+      "artifact_version": "V1",
+      "reported_at": "2026-10-23T16:00:00+08:00",
+      "evidence": "合成周报B"
+    }
+  ],
+  "risk_acceptance_note": "合成排练中明确接受已登记进度差和交付版本风险，后续按计划复核；不代表产品不合格结论"
+}

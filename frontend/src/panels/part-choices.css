@@ -1,0 +1,21 @@
+.part-choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:18px 0; }
+.part-choice-card { display:flex; gap:12px; align-items:center; border:1px solid #dbe6ee; border-radius:10px; padding:14px; background:linear-gradient(135deg,#f7fafd,#fff); }
+.part-illustration { display:block; flex-shrink:0; width:172px; min-width:100px; max-width:100%; height:auto; background:#f4f8fc; border:1px solid #e6edf4; border-radius:12px; box-sizing:border-box; }
+.part-choice-card h3 { margin:7px 0; color:#214666; font-size:17px; }.part-choice-card p { font-size:13px; line-height:1.8; }
+.part-choice-card[data-state=confirmed] { border-color:#a9d9c9; box-shadow:inset 3px 0 #1a9470; }
+.studio-shell .module-surface .part-choice-card .choice-state { display:inline-flex; margin-left:6px; padding:3px 9px; font-weight:600; border-radius:6px; }
+.studio-shell .module-surface .part-choice-card .choice-state.confirmed { background:#e4f6ee; color:#127753; border:1px solid #a9d9c9; }
+.studio-shell .module-surface .part-choice-card .choice-state.rejected { background:#fff0f2; color:#b63349; border:1px solid #efbbc5; }
+.part-choices .decision-review { margin-top:20px; padding:20px; border:1px solid #dbe5ef; border-radius:10px; }
+.part-choices .decision-review label { display:grid; gap:8px; }
+.part-choices .decision-review textarea { box-sizing:border-box; width:100%; resize:vertical; }
+.part-choices .decision-review .form-actions { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+.choice-blockers { background:#fff8e9; color:#865d1d; padding:12px 16px; border-radius:8px; margin:14px 0; font-size:13px; }
+.choice-blockers p { margin-bottom:0; }.choice-blockers ul { padding-left:20px; }
+.studio-shell .danger-action { color:#b7354e; border-color:#e8aab9; background:#fff5f7; }
+.import-numbering { padding:8px 0; }.import-numbering summary { cursor:pointer; color:#53738e; }
+.choice-statistics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin:18px 0; }
+.studio-shell .choice-statistics button { background:#f5f8fb; border:1px solid #dbe5ef; color:#506b82; padding:14px; display:flex; align-items:center; justify-content:space-between; gap:8px; border-radius:8px; }.choice-statistics strong { color:#285d91; font-size:24px; }.choice-statistics button[data-tone=confirmed] strong { color:#168068; }.choice-statistics button[data-tone=rejected] strong { color:#c34f60; }.choice-statistics button[data-tone=pending_review] strong { color:#b87716; }.studio-shell .choice-statistics button[aria-pressed=true] { border-color:#3a7cba; background:#eaf3ff; }
+.candidate-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }.candidate-card { padding:16px; border:1px solid #d9e3ed; border-radius:10px; }.candidate-card[data-selected=true] { border-color:#2778ba; box-shadow:inset 0 3px #2778ba; background:#f4f9ff; }.candidate-card .part-illustration { width:100%; height:190px; }.candidate-card h3 { color:#244e72; }.candidate-card li { font-size:12px; line-height:1.8; color:#617b92; }.candidate-card ul { padding-left:16px; }
+@media(max-width:1100px) { .part-choice-grid { grid-template-columns:minmax(0,1fr); }.candidate-grid { grid-template-columns:minmax(0,1fr); }.candidate-card .part-illustration { max-height:150px; }.choice-statistics { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:600px) { .part-choice-card { flex-direction:column; align-items:stretch; }.part-choice-card .part-illustration { width:100%; max-height:140px; }.choice-statistics { grid-template-columns:repeat(2,minmax(0,1fr)); }.studio-shell .choice-statistics button { padding:12px; font-size:12px; } }

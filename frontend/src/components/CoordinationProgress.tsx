@@ -1,0 +1,29 @@
+import { useEffect,useState,type FormEvent } from 'react'
+import { DEMO_COORDINATION } from '../demoInputs'
+import { api } from '../api'
+import type { ProgressPayload } from '../types'
+import { DetailOverlay } from './DetailOverlay'
+import { Notice } from '../ui'
+import { DEMO_ACTOR,DEMO_ROLE,toErrorMessage,formatTime } from '../uiSupport'
+import './workflow-overview.css'
+const kindLabels:Record<string,string>={schedule_lag:'计划落后',progress_gap:'参与方进度差',delivery_version:'交付版本差异'}
+export function CoordinationProgress({topicId,participants,onChanged}:{topicId:string;participants:string[];onChanged:()=>void}){
+ const [data,setData]=useState<ProgressPayload|null>(null),[error,setError]=useState(''),[open,setOpen]=useState(false),[opener,setOpener]=useState<HTMLElement|null>(null),[busy,setBusy]=useState(false),[blocked,setBlocked]=useState(false),[retry,setRetry]=useState(0)
+ const [participant,setParticipant]=useState(participants[0]??''),[milestone,setMilestone]=useState(''),[planned,setPlanned]=useState(''),[actual,setActual]=useState(''),[version,setVersion]=useState(''),[reportedAt,setReportedAt]=useState(''),[evidence,setEvidence]=useState('')
+ useEffect(()=>{let active=true;api.getCoordinationProgress(topicId).then(value=>{if(active){setData(value);setError('');setBlocked(false)}}).catch((err:unknown)=>{if(active)setError(toErrorMessage(err))});return()=>{active=false}},[topicId,retry])
+ async function save(event:FormEvent){
+  event.preventDefault();if(busy||blocked||!data)return
+  setBusy(true);setError('');let saved=false
+  try{
+   const current=data.rows.find(row=>row.participant===participant&&row.milestone===milestone.trim())
+   const updated=await api.saveCoordinationProgress(topicId,{participant,milestone:milestone.trim(),planned_percent:Number(planned),actual_percent:Number(actual),artifact_version:version.trim(),reported_at:new Date(reportedAt).toISOString(),evidence:evidence.trim(),expected_revision:current?.revision??0,actor:DEMO_ACTOR,role:DEMO_ROLE})
+   saved=true;setData(updated);await onChanged();setOpen(false)
+  }catch(err){if(saved)setBlocked(true);setError(`${saved?'进度已保存，刷新失败，请重新读取：':''}${toErrorMessage(err)}`)}finally{setBusy(false)}
+ }
+ return <section className="coordination-progress" aria-label="参与方计划与实际进度"><div className="panel-heading"><h3>参与方计划与实际进度</h3><button type="button" className="demo-fill-button coordination-progress-action" disabled={busy||!data||blocked} onClick={event=>{setOpen(true);setOpener(event.currentTarget);setError('')}}><span aria-hidden="true">＋</span> 登记参与方进度</button></div>{!open&&error&&<Notice kind="error">{error}</Notice>}
+ {data?.rows.length?<div className="table-wrap"><table><thead><tr><th>参与方 / 里程碑</th><th>计划</th><th>实际</th><th>交付版本</th><th>记录 / 依据</th></tr></thead><tbody>{data.rows.map(row=><tr key={row.id}><td>{row.participant} · {row.milestone}<small>记录V{row.revision}</small></td><td>{row.planned_percent}%</td><td><div className="progress-cell"><i style={{width:`${row.actual_percent}%`}}/><strong>{row.actual_percent}%</strong></div></td><td>{row.artifact_version}</td><td className="source"><span>{formatTime(row.reported_at)}</span><small>{row.evidence}</small></td></tr>)}</tbody></table></div>:<p className="hint">尚无进度登记。可输入各方同一里程碑的计划、实际进度与交付版本。</p>}
+ {data&&<><ul className="progress-alerts">{data.assessment.alerts.map((alert,index)=><li key={`${alert.kind}:${alert.milestone}:${alert.participants.join(':')}:${index}`} data-level={alert.level}><span aria-hidden="true">⚠</span><div><strong>{kindLabels[alert.kind]} · {alert.level==='high'?'高风险':'中风险'}</strong><p>{alert.reason}</p><small>{alert.milestone} · 依据：{alert.evidence.join(' / ')}</small></div></li>)}</ul>{data.assessment.data_gaps.map(gap=><p key={gap} className="hint">{gap}</p>)}<p className="hint">{data.assessment.thresholds} 保存进度后需重算协同指标，旧结果和风险接受记录保留。</p></>}
+ {(error||blocked)&&<button type="button" className="secondary" onClick={()=>setRetry(value=>value+1)} disabled={busy}>重新读取进度记录</button>}
+ {open&&<DetailOverlay title="参与方进度登记" variant="wide" subtitle="依据各方实际登记记录比较；不从消息内容推断进度。" eyebrow="协同风险 · 计划 / 实际 / 版本" returnFocus={opener} locked={busy} onClose={()=>setOpen(false)}>{error&&<Notice kind="error">{error}</Notice>}<div className="inline-controls">{participants.slice(0,2).map((name,index)=><button key={name} type="button" className="secondary" onClick={()=>{setParticipant(name);setMilestone('设计冻结');setPlanned('80');setActual(index===0?'90':'30');setVersion(index===0?'V2':'V1');setReportedAt(DEMO_COORDINATION.reportedAt);setEvidence(`合成周报${index===0?'A':'B'}`)}}>填入{name}进度样例</button>)}</div><p className="hint">合成演示：计划80%，实际90%/30%，交付V2/V1；仅预填，不会自动保存。请核对窗口与参与方。</p><form className="form-grid" onSubmit={event=>void save(event)}><label>参与方<select aria-label="进度参与方" value={participant} onChange={event=>setParticipant(event.target.value)}>{participants.map(name=><option key={name}>{name}</option>)}</select></label><label>里程碑<input aria-label="进度里程碑" value={milestone} onChange={event=>setMilestone(event.target.value)} required/></label><label>计划进度 %<input type="number" min="0" max="100" step="0.1" aria-label="计划进度百分比" value={planned} onChange={event=>setPlanned(event.target.value)} required/></label><label>实际进度 %<input type="number" min="0" max="100" step="0.1" aria-label="实际进度百分比" value={actual} onChange={event=>setActual(event.target.value)} required/></label><label>交付版本<input aria-label="交付版本" value={version} onChange={event=>setVersion(event.target.value)} required/></label><label>记录时间<input type="datetime-local" aria-label="进度记录时间" value={reportedAt} onChange={event=>setReportedAt(event.target.value)} required/></label><label className="wide">依据<textarea aria-label="进度依据" value={evidence} onChange={event=>setEvidence(event.target.value)} required/></label><div className="form-actions"><button type="submit" disabled={busy||blocked}>保存参与方进度</button></div></form></DetailOverlay>}
+ </section>
+}

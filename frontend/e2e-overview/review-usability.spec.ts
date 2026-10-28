@@ -1,0 +1,140 @@
+import {expect,test} from '@playwright/test'
+import {openWorkspaceTab} from '../e2e-support/navigation'
+import type {EngineeringRecord,PartChoices,TestPlanPayload,Requirement} from '../src/types'
+const evidence=process.env.ZHIYAN_EVIDENCE_DIR??'test-results/overview/screenshots'
+
+test('shows approval blockers, records rejection, confirms without a comment and separates trial reviews',async({page,request})=>{
+ test.setTimeout(90000)
+ const before=await(await request.get('/api/system/backup')).json()
+ const actor={actor:'隔离验收工程师',role:'design_engineer'}
+ const errors:string[]=[];page.on('pageerror',err=>errors.push(err.message))
+ const post=async(url:string,data:unknown={})=>{const response=await request.post(url,{data});expect(response.ok(),await response.text()).toBe(true);return response.json()}
+ try{
+  const project=(await(await request.get('/api/projects')).json())[0]
+  const pid=project.id
+  const clear=await post(`/api/projects/${pid}/clear-preview`)
+  await post(`/api/projects/${pid}/clear`,{...actor,confirmation_code:project.display_code,expected_state_hash:clear.expected_state_hash})
+  await page.goto('/');await openWorkspaceTab(page,'协议解析与澄清')
+  await expect(page.getByLabel('显示编号映射')).not.toBeVisible()
+  await expect(page.getByText('高级选项：自定义显示编号（可选）')).toBeVisible()
+  const source=await post(`/api/projects/${pid}/source-documents`,{display_code:'DOC-UX-REVIEW',doc_type:'protocol',version:'V1',mode:'manual',content:'发动机最大扭矩 2600 N·m。变速器为12档 AMT，额定输入扭矩不低于发动机最大扭矩，需配置取力器接口。总成重量不超过300 kg。耐久按双方商定标准执行。'})
+  const parsed=await post(`/api/source-documents/${source.id}/parse`)
+  for(const req of parsed.requirements as (Requirement & {parser_key:string})[]){
+   if(req.parser_key!=='durability') await post(`/api/requirements/${req.id}/confirmations`,{...actor,expected_revision:req.current_revision,decision:'confirmed'})
+  }
+  await post(`/api/projects/${pid}/variant-analysis`,{base_display_code:'JX-12A'})
+  const choices=async()=>await(await request.get(`/api/projects/${pid}/part-candidates`)).json() as PartChoices
+  let data=await choices()
+  for(const name of ['主箱壳体','取力器接口']){
+   const group=data.parts.find(row=>row.record.part_name===name)!
+   const candidate=group.candidates.find(row=>row.fit==='pass')!
+   await post(`/api/engineering-records/part/${group.record.id}/selection`,{...actor,expected_revision:group.record.revision,candidate_id:candidate.id,comment:'合成验收：核对登记包络'})
+  }
+  await page.reload();await openWorkspaceTab(page,'型谱选型与变型')
+  const engineering=page.getByRole('region',{name:'工程决策版本与审核',exact:true})
+  await expect(engineering.getByRole('tablist')).toHaveCount(0)
+  const engineeringBox=await engineering.boundingBox(), choicesBox=await page.getByRole('region',{name:'零件型号选择',exact:true}).boundingBox()
+  expect(engineeringBox!.y+engineeringBox!.height).toBeLessThanOrEqual(choicesBox!.y)
+  await engineering.screenshot({path:`${evidence}/variant-review.png`,style:'.platform-masthead {visibility:hidden;}'})
+  await expect(page.locator('.part-choice-card')).toHaveCount(8)
+  await page.locator('.part-choice-grid').screenshot({path:`${evidence}/part-category-gallery.png`,style:'.platform-masthead { visibility:hidden; }'})
+  await page.getByRole('button',{name:'选择型号 P-NEW-PTO-01',exact:true}).click()
+  let dialog=page.getByRole('dialog',{name:'零件候选比选'})
+  await expect(dialog.getByText(/上游未确认，请先审核该变型点/)).toBeVisible()
+  await expect(dialog.getByRole('button',{name:'确认选定型号',exact:true})).toBeDisabled()
+  await dialog.getByLabel('零件选型审核意见').fill('安装接口需要修改')
+  await dialog.getByRole('button',{name:'驳回选定型号',exact:true}).click()
+  await expect(dialog).toHaveCount(0)
+  data=await choices();expect(data.counts.rejected).toBe(1)
+  const pto=data.parts.find(row=>row.record.part_name==='取力器接口')!
+  const detail=await(await request.get(`/api/engineering-records/part/${pto.record.id}`)).json()
+  expect(detail.confirmations.at(-1)).toMatchObject({decision:'rejected',object_revision:pto.record.revision,comment:'安装接口需要修改'})
+  const records=await(await request.get(`/api/projects/${pid}/engineering-records`)).json() as EngineeringRecord[]
+  const variant=records.find(row=>row.kind==='variant')!
+  await engineering.getByRole('button',{name:`查看 ${variant.display_code} 版本`,exact:true}).click()
+  await page.getByRole('dialog').getByRole('button',{name:'确认当前版本',exact:true}).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await expect(engineering.getByText('当前版本审核已保存；历史审核保留。')).toBeVisible()
+  await page.getByRole('button',{name:'选择型号 P-03',exact:true}).click()
+  dialog=page.getByRole('dialog',{name:'零件候选比选'})
+  await expect(dialog.getByRole('button',{name:'确认选定型号',exact:true})).toBeEnabled()
+  const textarea=await dialog.getByLabel('零件选型审核意见').boundingBox()
+  const button=await dialog.getByRole('button',{name:'确认选定型号',exact:true}).boundingBox()
+  expect(button!.y-(textarea!.y+textarea!.height)).toBeGreaterThanOrEqual(12)
+  await dialog.getByLabel('零件选型审核意见').scrollIntoViewIfNeeded()
+  await page.screenshot({path:`${evidence}/part-review.png`})
+  await dialog.getByRole('button',{name:'确认选定型号',exact:true}).click()
+  await expect(dialog).toHaveCount(0)
+  const card=page.locator('.part-choice-card').filter({has:page.getByRole('heading',{name:'主箱壳体',exact:true})})
+  await expect(card.getByText('✓ 已确认',{exact:true})).toBeVisible()
+  const color=await card.locator('.choice-state').evaluate(el=>getComputedStyle(el).color)
+  expect(color).toBe('rgb(18, 119, 83)')
+  const confirmedHousing=(await choices()).parts.find(row=>row.record.part_name==='主箱壳体')!
+  const historyTrigger=engineering.getByRole('button',{name:`查看 ${confirmedHousing.record.part_display_code} 版本`,exact:true})
+  await historyTrigger.click()
+  const historyDialog=page.getByRole('dialog',{name:'P-03 版本与审核',exact:true})
+  await expect(historyDialog.getByText(/DEMO-P01-/).first()).toBeVisible()
+  await expect(historyDialog.getByRole('button',{name:'确认当前版本',exact:true})).toHaveCount(0)
+  await expect(historyDialog.getByLabel('工程决策审核意见')).toHaveCount(0)
+  await historyDialog.getByRole('button',{name:'关闭版本详情'}).click()
+  await expect(historyTrigger).toBeFocused()
+  await engineering.screenshot({path:`${evidence}/part-records.png`,style:'.platform-masthead {visibility:hidden;}'})
+  await page.screenshot({path:`${evidence}/part-confirmed.png`,fullPage:true})
+  await page.getByRole('button',{name:'选择型号 P-03',exact:true}).click()
+  dialog=page.getByRole('dialog',{name:'零件候选比选'})
+  const withdraw=dialog.getByRole('button',{name:'撤回确认并驳回',exact:true})
+  await expect(withdraw).toBeEnabled()
+  await expect(dialog.getByText('撤回原因（选填）', {exact:true})).toBeVisible()
+  await withdraw.click()
+  await expect(dialog).toHaveCount(0)
+  await expect(card.getByText('已驳回',{exact:true})).toBeVisible()
+  const housing=(await choices()).parts.find(row=>row.record.part_name==='主箱壳体')!
+  const housingHistory=await(await request.get(`/api/engineering-records/part/${housing.record.id}`)).json()
+  expect(housingHistory.confirmations.map((row:{decision:string})=>row.decision)).toEqual(['confirmed','rejected'])
+  expect(housingHistory.confirmations.at(-1).comment).toBe('')
+  const audit=await(await request.get(`/api/projects/${pid}/audit-events`)).json()
+  expect(audit.some((row:{action:string;object_id:string})=>row.action==='part.confirmation_withdrawn'&&row.object_id===housing.record.id)).toBe(true)
+  expect(audit.find((row:{action:string;object_id:string})=>row.action==='part.confirmation_withdrawn'&&row.object_id===housing.record.id).comment).toBe('')
+  await openWorkspaceTab(page,'需求清单')
+  const chart=page.getByRole('region',{name:'需求审核状态统计',exact:true})
+  await expect(chart.getByRole('img')).toBeVisible()
+  await expect(chart.getByText(/已确认占比/)).toBeVisible()
+  await chart.scrollIntoViewIfNeeded()
+  await chart.screenshot({path:`${evidence}/requirement-statistics.png`,style:'.platform-masthead { visibility:hidden; }'})
+  await chart.getByRole('button',{name:'按已确认筛选',exact:true}).click()
+  await expect(page.getByRole('button',{name:/^已确认 \d+ 条$/})).toHaveAttribute('aria-pressed','true')
+  await page.setViewportSize({width:390,height:844})
+  await chart.scrollIntoViewIfNeeded()
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
+  await chart.screenshot({path:`${evidence}/requirement-statistics-mobile.png`,style:'.platform-masthead { visibility:hidden; }'})
+  await page.setViewportSize({width:1280,height:720})
+  await post(`/api/projects/${pid}/test-plan`)
+  const plan=await(await request.get(`/api/projects/${pid}/test-plan`)).json() as TestPlanPayload
+  const endurance=plan.cases.find(row=>row.case_key==='durability')!
+  expect(endurance.complete).toBe(false)
+  await openWorkspaceTab(page,'试验验证与追溯')
+  await page.getByRole('button',{name:`驳回用例 ${endurance.display_code}`,exact:true}).click()
+  await page.getByLabel('驳回原因').fill('缺少耐久判定标准')
+  await page.getByRole('button',{name:'提交驳回',exact:true}).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  const caseRow=page.getByRole('row').filter({has:page.getByRole('cell',{name:endurance.display_code,exact:true})})
+  await expect(caseRow.getByText('已驳回',{exact:true})).toBeVisible()
+  await expect(caseRow.getByRole('button',{name:'确认用例',exact:true})).toHaveCount(0)
+  await page.getByRole('button',{name:'驳回试验方案',exact:true}).click()
+  await page.getByLabel('驳回原因').fill('补充耐久标准后重新生成方案')
+  await page.getByRole('button',{name:'提交驳回',exact:true}).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await expect(page.getByRole('button',{name:'确认试验方案',exact:true})).toHaveCount(0)
+  await page.screenshot({path:`${evidence}/test-rejections.png`,fullPage:true})
+  await page.setViewportSize({width:390,height:844});await openWorkspaceTab(page,'型谱选型与变型')
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
+  await page.getByRole('button',{name:'选择型号 P-03',exact:true}).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  expect(await page.getByRole('dialog').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true)
+  await page.screenshot({path:`${evidence}/part-mobile.png`})
+  expect(errors).toEqual([])
+ }finally{
+  const checked=await post('/api/system/restore-preview',{backup:before})
+  await post('/api/system/restore',{backup:before,expected_state_hash:checked.expected_state_hash,...actor})
+ }
+})

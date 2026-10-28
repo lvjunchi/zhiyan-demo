@@ -1,0 +1,27 @@
+{
+  "data_kind": "synthetic",
+  "catalog": "数据库part_candidates，017迁移预置24型号",
+  "engine_input": {
+    "max_torque_nm": 2600,
+    "power_kw": 397,
+    "power_speed_rpm": 1900
+  },
+  "base": "JX-12A",
+  "selections": [
+    {
+      "part_name": "主箱壳体",
+      "model_code": "DEMO-P01-3",
+      "reason": "3000 N·m / 16档合成匹配包络；材料与安装接口仍需工程师核对"
+    },
+    {
+      "part_name": "齿轮组",
+      "model_code": "DEMO-P02-3",
+      "reason": "加强包络示例"
+    }
+  ],
+  "incompatible_example": {
+    "model_code": "DEMO-P01-1",
+    "reason": "2400 N·m / 8档不满足本协议输入，不允许选用"
+  },
+  "image_note": "界面使用本地工程示意图，产品照片为参考图，不是候选实物认证照片"
+}

@@ -1,0 +1,9 @@
+.run-dialog-form {display:grid;gap:12px;}
+.run-dialog-form .hint {margin:0;}
+.run-result-badge {display:inline-flex!important;align-items:center;gap:7px;padding:5px 10px;border:1px solid #d6e1ed;border-radius:7px;font-size:13px;font-weight:700;line-height:1.45;background:#f3f6fa;color:#62758a;}
+.run-result-badge > span {display:inline!important;font-size:15px;font-weight:700;}
+.run-result-badge--pass {color:#107b55;background:#e8f7ef;border-color:#9dd9bd;}
+.run-result-badge--fail {color:#b32d48;background:#fff0f2;border-color:#efaabc;}
+.run-result-badge--incomplete,.run-result-badge--invalid {color:#9a650b;background:#fff7e6;border-color:#ebce93;}
+.run-result-badge--history {color:#697a8b;background:#f0f3f6;border-color:#cdd6df;}
+.run-result-badge--not-run {border-style:dashed;font-weight:500;}

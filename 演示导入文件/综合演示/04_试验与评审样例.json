@@ -1,0 +1,52 @@
+{
+  "data_kind": "synthetic",
+  "mode": "manual",
+  "review_comment": "已依据协议及合成澄清单核对当前版本",
+  "fmea_scores": {
+    "FMEA-01": {
+      "severity": 8,
+      "occurrence": 4,
+      "detection": 3
+    },
+    "FMEA-02": {
+      "severity": 7,
+      "occurrence": 3,
+      "detection": 4
+    },
+    "FMEA-03": {
+      "severity": 6,
+      "occurrence": 3,
+      "detection": 4
+    },
+    "default": {
+      "severity": 6,
+      "occurrence": 3,
+      "detection": 4
+    }
+  },
+  "fmea_basis": "工程师按演示量表人工指定；不按行号编造分数，不代表实测风险频度",
+  "durability_criteria": "合成补充规程DEMO-DUR-001：等效台架循环1000 h无失效",
+  "manual_run": {
+    "conditions": "合成台架/静态检查工况",
+    "manual_result": "pass",
+    "evidence": "合成执行记录DEMO-TR-01，参数与用例逐项核对"
+  },
+  "static_torsion": {
+    "initial_pass": {
+      "load_basis_numeric": 2600,
+      "backup_coefficient": 2.6
+    },
+    "wrong_load": {
+      "load_basis_numeric": 2600,
+      "backup_coefficient": 2.6
+    },
+    "new_fail": {
+      "load_basis_numeric": 2800,
+      "backup_coefficient": 2.4
+    },
+    "new_pass": {
+      "load_basis_numeric": 2800,
+      "backup_coefficient": 2.6
+    }
+  }
+}
