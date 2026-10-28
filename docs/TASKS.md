@@ -496,4 +496,4 @@
 
 | ID | 需求/验收 | 验收行为 | 依赖 | 状态 |
 | --- | --- | --- | --- | --- |
-| GIT-PUBLISH-01 | 用户授权公开提交、AC-01/19 | 精简源码/合成初始数据、保留远程原历史、认证后推送并核验 | origin/main、GitHub凭据 | 本地整理与12项启动测试通过，推送等待GitHub身份认证；[报告](test-evidence/2026-10-28/GIT-PUBLISH-01/REPORT.md) |
+| GIT-PUBLISH-01 | 用户授权公开提交、AC-01/19 | 精简源码/合成初始数据、保留远程原历史、认证后推送并核验 | origin/main、GitHub凭据 | 完成；479文件约10.91MB、12项启动测试及提交范围审计通过，main成功推送并建立跟踪，远程原历史保留；[报告](test-evidence/2026-10-28/GIT-PUBLISH-01/REPORT.md) |

@@ -20,4 +20,9 @@
 
 本机全局Git代理127.0.0.1:7897不可连接；仅对本轮网络命令临时传入空http/https proxy，未改变全局代理。公开读取和fetch成功，dry-run推送因缺少GitHub登录凭据失败，未上传任何项目文件。用户的公开推送授权已具备，不再重复请求；本地提交完成后使用Git Credential Manager官方登录流程认证，再推送并核对远程提交。
 
-当前阶段：本地提交准备完成，实际推送仍待GitHub身份认证。精确提交和推送结果以最终Git命令及后续记录为准，不将dry-run或仅关联origin宣称推送成功。
+实际结果：主提交`f2eabb9f41e19b2aca695a2108f464e4623cfa89`已成功推送至origin/main，原e0418a8提交保留，479个受管文件约10.91MB；main已设置跟踪origin/main。后续仅补充本次核验记录。
+
+
+## 完成补记
+
+本地`git commit` exit0。Git Credential Manager浏览器登录命令返回账号lvjunchi已有凭据，说明最初dry-run的问题是未明确选择已有账号；无需用户重新输入凭据或打开网页授权。仅在本仓库设置credential.https://github.com.username=lvjunchi，随后`git -c http.proxy= -c https.proxy= -c credential.interactive=false push -u origin main` exit0，e0418a8→f2eabb9，跟踪建立。逐命令代理绕过不影响全局设置。原提交后git status干净；补记另作普通文档提交，不amend或强推。最终再次用ls-remote核对远程main与本地HEAD一致。审计脚本最终确认479文件10,908,393字节，最大单文件小于2MB，范围内凭据格式无命中；原始审计和测试输出保留本地、不上传。

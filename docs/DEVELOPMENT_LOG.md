@@ -1130,3 +1130,5 @@ package_bundle.py和verify_bundle.py最终exit0：全部文件清单/CRC/哈希�
 ## 2026-10-28 GIT-PUBLISH-01 首次公开源码准备
 
 用户明确授权推送公开仓库lvjunchi/zhiyan-demo。远程main仅有e0418a8初始README，fetch后以其为本地main基线保留历史，不强推。完善忽略规则，暂存源码/脚本/指南/合成初始状态，排除当前业务库/历史备份/原始参考材料/依赖/大测试产物/ZIP。README补首次克隆安装步骤，初始源manifest仅改为可移植相对路径，未改业务DB。初次478文件10.90MB审计、凭据格式检查通过；备份base64先校验解码再扫描实际内容。启动相关12测试通过，首轮缺临时目录父路径的setup错误已用新隔离目录修复重跑；无业务变更，不虚构RED或覆盖率。Git全局代理不可用，仅逐命令绕过；dry-run推送无凭据而失败，未上传。本地提交完成后打开官方Git认证流程，成功后再记录实际远程核验。[报告](test-evidence/2026-10-28/GIT-PUBLISH-01/REPORT.md)。
+
+GIT-PUBLISH-01完成补记：主提交f2eabb9f41e19b2aca695a2108f464e4623cfa89成功推送main，479文件10,908,393字节；保留远程初始e0418a8。GCM已缓存lvjunchi账号凭据，指定本仓库credential用户名后推送exit0，无需用户提供密码/令牌。main已跟踪origin/main，提交后状态干净；追加普通文档提交记录核验，不改写历史。
