@@ -58,3 +58,6 @@ docs/test-evidence/**
 !docs/test-evidence/**/
 !docs/test-evidence/**/REPORT.md
 docs/test-evidence/**/pytest*/
+
+# Regenerable local verification outputs.
+.local-test-evidence/
