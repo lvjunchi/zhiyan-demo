@@ -108,9 +108,9 @@
 - [UI-R名称及选型/相似项目弹窗](test-evidence/2026-10-22/UI-R/REPORT.md)：96前端/14浏览器的历史检查点，后续由UI-S再次验证。
 - [MATERIAL-UPDATE-01](test-evidence/2026-10-22/MATERIAL-UPDATE-01/REPORT.md)：日常旧材料更新为MP-P01-002，快照/ZIP与清单哈希核验通过；草稿与人工待确认仍如实保留。
 - [UI-Q 三处详情交互](test-evidence/2026-10-21/UI-Q/REPORT.md)：需求/冲突右抽屉、样件宽弹窗、失败重试与对象隔离；93 前端 / 13 个不同浏览器检查；后端未改未重跑。
-- [UI-P 实物图与版本弹窗](test-evidence/2026-10-21/UI-P/REPORT.md)：本地官网图片、弹窗审核/键盘/手机，85 前端 / 3 浏览器检查通过；[当前总览](test-evidence/2026-10-21/UI-P/live-dashboard-1920.png)。替代 UI-O 线稿，后端本轮未重跑。
+- [UI-P 实物图与版本弹窗](test-evidence/2026-10-21/UI-P/REPORT.md)：本地官网图片、弹窗审核/键盘/手机，85 前端 / 3 浏览器检查通过；当前总览截图已保留在[历史证据归档](test-evidence/2026-10-29/DISK-CLEAN-01/REPORT.md)。替代 UI-O 线稿，后端本轮未重跑。
 - [VERIFY-03 最终交付验证](test-evidence/2026-10-21/VERIFY-03/REPORT.md)：256 后端 / 83 前端 / 20 浏览器，主线复演、独立核心分支门禁、日常数据未重置。
-- [UI-N 总览与模块视觉](test-evidence/2026-10-21/UI-N/REPORT.md)：三桌面同屏、中文字体/色阶与机械示意；[日常总览](test-evidence/2026-10-21/UI-N/live-dashboard-1920.png)。
+- [UI-N 总览与模块视觉](test-evidence/2026-10-21/UI-N/REPORT.md)：三桌面同屏、中文字体/色阶与机械示意；日常总览截图已保留在[历史证据归档](test-evidence/2026-10-29/DISK-CLEAN-01/REPORT.md)。
 - [MAINT-01](test-evidence/2026-10-21/MAINT-01/REPORT.md)：项目/样件状态隔离，effect 警告清零，覆盖门禁纠正。
 
 - [START-01](test-evidence/2026-10-21/START-01/REPORT.md)：Windows 一键启动、只读预检、退出备份、双次真实启动与 249 项后端回归。
